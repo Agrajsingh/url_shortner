@@ -1,0 +1,53 @@
+# Node dependencies
+node_modules/
+
+# Build outputs
+build/
+dist/
+.out/
+.next/
+.nuxt/
+.coverage/
+coverage/
+.cache/
+.parcel-cache/
+.turbo/
+.sass-cache/
+
+# Environment files
+.env
+.env.*
+*.env
+*.env.*
+BACKEND/.env
+FRONTEND/.env
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+logs/
+*.log
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Certificates/Keys (security)
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+
+# Misc framework folders
+.vercel/
+.netlify/
+.firebase/
+
+# Local runtime data
+*.pid
+*.seed
+*.pid.lock
