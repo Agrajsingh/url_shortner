@@ -1,18 +1,40 @@
 import React, { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { CheckCircle, XCircle, Info, X } from 'lucide-react'
 
 const Toast = ({ id, type = 'info', message, onClose }) => {
-  const base = 'pointer-events-auto flex items-center gap-2 rounded-lg px-4 py-3 shadow-md border text-sm'
   const styles = {
-    success: 'bg-green-600 text-white border-green-700',
-    error: 'bg-red-600 text-white border-red-700',
-    info: 'bg-gray-900 text-white border-gray-800',
+    success: 'bg-white dark:bg-gray-800 border-green-100 dark:border-green-900/30 text-green-800 dark:text-green-400 shadow-green-100 dark:shadow-none',
+    error: 'bg-white dark:bg-gray-800 border-red-100 dark:border-red-900/30 text-red-800 dark:text-red-400 shadow-red-100 dark:shadow-none',
+    info: 'bg-white dark:bg-gray-800 border-blue-100 dark:border-blue-900/30 text-blue-800 dark:text-blue-400 shadow-blue-100 dark:shadow-none',
   }
+
+  const icons = {
+    success: <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />,
+    error: <XCircle className="h-5 w-5 text-red-500 dark:text-red-400" />,
+    info: <Info className="h-5 w-5 text-blue-500 dark:text-blue-400" />,
+  }
+
   return (
-    <div className={`${base} ${styles[type]}`} role="status">
-      <span className="inline-block w-2 h-2 rounded-full bg-white/80" />
-      <span>{message}</span>
-      <button onClick={() => onClose(id)} className="ml-2/ -mr-1 p-1 text-white/80 hover:text-white">×</button>
-    </div>
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+      className={`pointer-events-auto flex items-center gap-3 rounded-xl px-4 py-3 shadow-lg border ${styles[type]} min-w-[300px] max-w-md backdrop-blur-sm`}
+      role="status"
+    >
+      <div className="shrink-0">
+        {icons[type]}
+      </div>
+      <p className="flex-1 text-sm font-medium">{message}</p>
+      <button
+        onClick={() => onClose(id)}
+        className="shrink-0 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+      >
+        <X className="h-4 w-4" />
+      </button>
+    </motion.div>
   )
 }
 
@@ -26,7 +48,7 @@ const ToastContainer = () => {
       setToasts((prev) => [...prev, { id, type, message }])
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== id))
-      }, 2500)
+      }, 4000)
     }
     window.addEventListener('toast', handler)
     return () => window.removeEventListener('toast', handler)
@@ -35,10 +57,12 @@ const ToastContainer = () => {
   const close = (id) => setToasts((prev) => prev.filter((t) => t.id !== id))
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-50 flex flex-col items-end gap-2 p-4 sm:p-6">
-      {toasts.map((t) => (
-        <Toast key={t.id} {...t} onClose={close} />
-      ))}
+    <div className="pointer-events-none fixed bottom-0 right-0 z-50 flex flex-col items-end gap-2 p-4 sm:p-6">
+      <AnimatePresence mode="popLayout">
+        {toasts.map((t) => (
+          <Toast key={t.id} {...t} onClose={close} />
+        ))}
+      </AnimatePresence>
     </div>
   )
 }
