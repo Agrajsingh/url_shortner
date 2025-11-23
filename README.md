@@ -1,5 +1,4 @@
 # URL Shortener (Backend + Frontend)
-
 A full‑stack URL shortener application with authentication, custom slugs, and redirect support. Backend is built with Node.js/Express + MongoDB. Frontend is a React app powered by Vite and Tailwind CSS.
 
 ---
