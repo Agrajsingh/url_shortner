@@ -15,18 +15,33 @@ dotenv.config("./.env")
 
 const app = express();
 
+// Normalize allowed origins and log incoming origin for easier debugging.
 const allowedOrigins = new Set([
     'http://localhost:5174',
     'http://127.0.0.1:5174',
     'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    process.env.FRONTEND_URL // Add production frontend URL
+    'http://127.0.0.1:5173'
 ]);
+
+// Add FRONTEND_URL from env if present (trim trailing slash)
+const rawFrontendUrl = (process.env.FRONTEND_URL || '').trim();
+const frontendUrl = rawFrontendUrl ? rawFrontendUrl.replace(/\/+$/, '') : '';
+if (frontendUrl) allowedOrigins.add(frontendUrl);
 
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin) return callback(null, true); // non-browser or same-origin
-        if (allowedOrigins.has(origin)) return callback(null, true);
+        // Log origin for debugging CORS issues (appears in server logs)
+        console.log('CORS origin:', origin);
+
+        if (!origin) return callback(null, true); // non-browser or same-origin requests
+
+        const normalized = origin.replace(/\/+$/, '');
+
+        // Allow exact matches or any onrender.com subdomain (convenience for Render)
+        if (allowedOrigins.has(normalized) || /\.onrender\.com$/.test(normalized)) {
+            return callback(null, true);
+        }
+
         return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
@@ -55,4 +70,3 @@ app.listen(PORT, () => {
 })
 
 // GET - Redirection
-//mongodb+srv://agrajsingh0511_db_user:CZCeuQNUsixTWYjA@cluster0.yuunwaz.mongodb.net/?appName=Cluster0
